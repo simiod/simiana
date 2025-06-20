@@ -16,7 +16,7 @@ st_autorefresh(interval=300_000, key="auto_refresh")
 # === Load data from Google Sheets ===
 @st.cache_data(ttl=300)  # cache for 5 minutes to match auto-refresh
 def load_data(sheet):
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]Add commentMore actions
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_name(creds_path, scope)
     # Directly access Streamlit secrets and parse them as JSON
     credentials_dict = st.secrets["simiana"] 
