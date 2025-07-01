@@ -38,6 +38,18 @@ def load_data(sheet):
 st.title(":wrench: Induct Data Monitor :rocket:")
 st.caption("Auto-refreshes every 5 minutes. You can also trigger a manual refresh below.")
 
+# === Manual Refresh Button ===
+if st.button("🔄 Manual Refresh"):
+    st.cache_data.clear()
+    st.rerun()
+
+# === Create toggle button for value marker annotations ===
+text_markers = None
+toggle_markers= st.toggle("Display Values", value=True, key='B1', help="Turn **on/off** utilization % value markers for a neater display", disabled=False, label_visibility="visible")
+if toggle_markers:         
+    text_markers = "Utilization %"
+    markers = True
+
 # === Load and display data ===
 induct_106_min_data = load_data("Induct 106 Min")
 induct_106_hour_data = load_data("Induct 106 Hour")
@@ -52,7 +64,7 @@ tabs_1, tabs_2 = st.tabs(['Induct 105','Induct 106'])
 with tabs_1:
     custom_colors_categorical = {'Combi_util': 'hotpink', 'Tote_util': 'orange', 'Tray_util': 'lightblue'}
 
-    fig_1 = px.line(induct_105_min_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers=True, text="Utilization %", title="Induct 105 Minute analysis")
+    fig_1 = px.line(induct_105_min_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers= toggle_markers, text= text_markers, title="Induct 105 Minute analysis")
     fig_1.update_layout(
         legend=dict(
             orientation="h",  # Horizontal legend
@@ -63,7 +75,7 @@ with tabs_1:
     )
     st.plotly_chart(fig_1, use_container_width=True, key='A1' )
 
-    fig_2 = px.line(induct_105_hour_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers=True, text="Utilization %", title="Induct 105 Hourly analysis")
+    fig_2 = px.line(induct_105_hour_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers= toggle_markers, text= text_markers,, title="Induct 105 Hourly analysis")
     fig_2.update_layout(
         legend=dict(
             orientation="h",  # Horizontal legend
@@ -74,7 +86,7 @@ with tabs_1:
     )
     st.plotly_chart(fig_2, use_container_width=True, key='A2')
 
-    fig_3 = px.line(induct_105_day_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers=True, text="Utilization %", title="Induct 105 Daily analysis")
+    fig_3 = px.line(induct_105_day_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers= toggle_markers, text= text_markers, title="Induct 105 Daily analysis")
     fig_3.update_layout(
         legend=dict(
             orientation="h",  # Horizontal legend
@@ -88,7 +100,7 @@ with tabs_1:
 # === Create Induct 106 ===
 with tabs_2:
 
-    fig_1 = px.line(induct_106_min_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers=True, text="Utilization %", title="Induct 106 Minute analysis")
+    fig_1 = px.line(induct_106_min_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers= toggle_markers, text= text_markers, title="Induct 106 Minute analysis")
     fig_1.update_layout(
         legend=dict(
             orientation="h",  # Horizontal legend
@@ -101,7 +113,7 @@ with tabs_2:
 
     st.plotly_chart(fig_1, use_container_width=True, key='1' )
 
-    fig_2 = px.line(induct_106_hour_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers=True, text="Utilization %", title="Induct 106 Hourly analysis")
+    fig_2 = px.line(induct_106_hour_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers= toggle_markers, text= text_markers, title="Induct 106 Hourly analysis")
     fig_2.update_layout(
         legend=dict(
             orientation="h",  # Horizontal legend
@@ -112,7 +124,7 @@ with tabs_2:
     )
     st.plotly_chart(fig_2, use_container_width=True, key= '2')
 
-    fig_3 = px.line(induct_106_day_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers=True, text="Utilization %", title="Induct 106 Daily analysis")
+    fig_3 = px.line(induct_106_day_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers= toggle_markers, text= text_markers, title="Induct 106 Daily analysis")
     fig_3.update_layout(
         legend=dict(
             orientation="h",  # Horizontal legend
