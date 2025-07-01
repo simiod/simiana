@@ -75,7 +75,7 @@ with tabs_1:
     )
     st.plotly_chart(fig_1, use_container_width=True, key='A1' )
 
-    fig_2 = px.line(induct_105_hour_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers= toggle_markers, text= text_markers,, title="Induct 105 Hourly analysis")
+    fig_2 = px.line(induct_105_hour_data, x="Serialization", y="Utilization %", color="Category", color_discrete_map=custom_colors_categorical, markers= toggle_markers, text= text_markers, title="Induct 105 Hourly analysis")
     fig_2.update_layout(
         legend=dict(
             orientation="h",  # Horizontal legend
