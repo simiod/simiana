@@ -10,11 +10,11 @@ st.set_page_config(layout="wide")
 creds_path = "simi-takeover.json"
 sheet_name = "IA Practice"
 
-# === Auto-refresh every 5 minutes (300 seconds) ===
-st_autorefresh(interval=300_000, key="auto_refresh")
+# === Auto-refresh every 10 minutes (300 seconds) ===
+st_autorefresh(interval=600_000, key="auto_refresh")
 
 # === Load data from Google Sheets ===
-@st.cache_data(ttl=300)  # cache for 5 minutes to match auto-refresh
+@st.cache_data(ttl=600)  # cache for 10 minutes to match auto-refresh
 def load_data(sheet):
     # Use credentials to create a client to interact with the Google Drive API
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -406,6 +406,7 @@ with tabs_8:
         )
     )
     st.plotly_chart(fig_3, use_container_width=True, key='9')
+
 
 
 
