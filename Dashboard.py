@@ -7,8 +7,25 @@ from streamlit_autorefresh import st_autorefresh
 import time
 from googleapiclient.errors import HttpError
 import google.auth.exceptions
+from googleapiclient.discovery import build
+from google.oauth2.service_account import Credentials
+import datetime
 
 st.set_page_config(layout="wide")
+
+
+#=== Timestamp variables ==
+SCOPES = [
+    "https://spreadsheets.google.com/feeds",
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/drive.metadata.readonly",
+]
+credentials = Credentials.from_service_account_info(
+    st.secrets["simiana"], scopes=SCOPES
+)
+drive_service = build('drive', 'v3', credentials=credentials)
+file_id = "1-tD1JEvzrNbQ3cEnLKm0EkJEy-t6g1eeHobuVN5D2E0"
+
 
 creds_path = "simi-takeover.json"
 sheet_name = "IA Practice"
@@ -16,8 +33,10 @@ sheet_name = "IA Practice"
 # === Auto-refresh every 5 minutes (300 seconds) ===
 st_autorefresh(interval=300_000, key="auto_refresh")
 
+
+
 # === Load data from Google Sheets ===
-@st.cache_data(ttl=90)  # cache for 1 minute 30 sec for fresh data
+@st.cache_data(ttl=120)  # cache for 2 min for fresh data
 def load_all_induct_data_batch(sheet_name, worksheet_names, max_retries=5):
     # Use credentials to create a client to interact with the Google Drive API
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -77,10 +96,18 @@ SHEET_NAME = "IA Practice"
 # Load all data at once (this returns a dictionary of DataFrames)
 all_data = load_all_induct_data_batch(SHEET_NAME, worksheet_names)
 
-
+@st.cache_data(ttl=120)
+def get_sheet_last_modified_time(file_id):
+    try:
+        file = drive_service.files().get(fileId=file_id, fields='modifiedTime').execute()
+        return file.get('modifiedTime')
+    except Exception as e:
+        st.error(f"Error fetching last modified time: {e}")
+        return None
+    
 # === Streamlit layout ===
-st.title(":wrench: AFE Induct Data Monitor :rocket:")
-st.caption("Auto-refreshes every 5 minutes. You can also trigger a manual refresh below.")
+st.title(":package: LCY3 AFE Induct Data Monitor :package:")
+st.caption("Auto-refreshes every 5 minutes. Data is cached every 2 minutes.")
 
 # === Manual Refresh Button ===
 if st.button("🔄 Manual Refresh"):
@@ -94,6 +121,12 @@ if toggle_markers:
     text_markers = "Utilization %"
     markers = True
 
+last_modified_iso = get_sheet_last_modified_time(file_id)
+if last_modified_iso:
+    last_modified_dt = datetime.datetime.fromisoformat(last_modified_iso.replace("Z", "+00:00"))
+    st.caption(f"📅 Data last updated on: {last_modified_dt.strftime('%Y-%m-%d %H:%M:%S UTC')}")
+else:
+    st.caption("📅 Last update time not available.")
 
 # Make sure all the tabs span the width of the page and arent squashed
 st.markdown("""
